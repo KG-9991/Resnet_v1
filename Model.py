@@ -68,9 +68,12 @@ class Cifar(nn.Module):
                 for j in range(x_train_new.shape[0]):
                     x_train_pre.append(parse_record(x_train_new[j],True)) 
                 x_train_pre = torch.tensor(x_train_pre, dtype=torch.float32)
+                x_train_pre = x_train_pre.cuda()
                 #print("Batch number:",i+1)
                 outputs = self.network(x_train_pre)
-                loss = self.loss(outputs,torch.tensor(y_train_new))             
+                y_train_new = torch.tensor(y_train_new)
+                y_train_new = y_train_new.cuda()
+                loss = self.loss(outputs,y_train_new)             
                 ### YOUR CODE HERE
                 self.optimizer.zero_grad()
                 loss.backward()
@@ -91,6 +94,7 @@ class Cifar(nn.Module):
         self.network.eval()
         x = x.reshape(-1, 3, 32, 32)
         x = torch.tensor(x, dtype=torch.float32)
+        x = x.cuda()
         # Now you can pass x_tensor to the network
         print("aaaaa",x.size())
         print('### Test or Validation ###')
@@ -111,7 +115,9 @@ class Cifar(nn.Module):
             ### END CODE HERE
 
             y = torch.tensor(y)
+            y = y.cuda()
             preds = torch.tensor(preds)
+            preds = preds.cuda()
             print('Test accuracy: {:.4f}'.format(torch.sum(preds==y)/y.shape[0]))
     
     def save(self, epoch):
