@@ -98,7 +98,7 @@ class Cifar(nn.Module):
         x_test_pre = []
         for i in x:
                 x_test_pre.append(parse_record(i,False))
-        x_test_pre = torch.tensor(x_test_pre)
+        x_test_pre = torch.tensor(x_test_pre,dtype=torch.float32)
         # Now you can pass x_tensor to the network
         print('### Test or Validation ###')
         for checkpoint_num in checkpoint_num_list:
