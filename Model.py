@@ -68,11 +68,11 @@ class Cifar(nn.Module):
                 for j in range(x_train_new.shape[0]):
                     x_train_pre.append(parse_record(x_train_new[j],True)) 
                 x_train_pre = torch.tensor(x_train_pre, dtype=torch.float32)
-                x_train_pre = x_train_pre.cuda()
+                #x_train_pre = x_train_pre.cuda()
                 #print("Batch number:",i+1)
                 outputs = self.network(x_train_pre)
                 y_train_new = torch.tensor(y_train_new)
-                y_train_new = y_train_new.cuda()
+                #y_train_new = y_train_new.cuda()
                 loss = self.loss(outputs,y_train_new)             
                 ### YOUR CODE HERE
                 self.optimizer.zero_grad()
@@ -92,11 +92,14 @@ class Cifar(nn.Module):
 
     def test_or_validate(self, x, y, checkpoint_num_list):
         self.network.eval()
-        x = x.reshape(-1, 3, 32, 32)
+        """x = x.reshape(-1, 3, 32, 32)
         x = torch.tensor(x, dtype=torch.float32)
-        x = x.cuda()
+        x = x.cuda()"""
+        x_test_pre = []
+        for i in x:
+                x_test_pre.append(parse_record(i,False))
+        x_test_pre = torch.tensor(x_test_pre)
         # Now you can pass x_tensor to the network
-        print("aaaaa",x.size())
         print('### Test or Validation ###')
         for checkpoint_num in checkpoint_num_list:
             checkpointfile = os.path.join(self.config.modeldir, 'model-%d.ckpt'%(checkpoint_num))
@@ -106,18 +109,18 @@ class Cifar(nn.Module):
             #x_test_pre = []
             """for i in x:
                 x_test_pre.append(parse_record(x[i],False))"""
-            for i in tqdm(range(x.shape[0])):
+            for i in tqdm(range(x_test_pre.shape[0])):
                 with torch.no_grad():
-                    outputs = self.network(x[i].unsqueeze(0))
+                    outputs = self.network(x_test_pre[i].unsqueeze(0))
                 _, predicted = torch.max(outputs, 1)
                 preds.append(predicted.item())
             
             ### END CODE HERE
 
             y = torch.tensor(y)
-            y = y.cuda()
+            #y = y.cuda()
             preds = torch.tensor(preds)
-            preds = preds.cuda()
+            #preds = preds.cuda()
             print('Test accuracy: {:.4f}'.format(torch.sum(preds==y)/y.shape[0]))
     
     def save(self, epoch):
