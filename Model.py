@@ -81,7 +81,7 @@ class Cifar(nn.Module):
                 loss.backward()
                 self.optimizer.step()
                 train_loss += loss.item() * self.config.batch_size
-                print("Batch {:d}/{:d} Loss {:.6f}".format(i, num_batches, loss.item()),flush=True)
+                print("Batch {:d}/{:d} Loss {:.6f}".format(i, num_batches, loss.item()),end="\r",flush=True)
                 #print("Batch {:d}/{:d} Loss {:.6f}".format(i, num_batches, loss), end='\r', flush=True)
             avrg_loss = train_loss/num_samples
             avrg_losses.append(avrg_loss)
