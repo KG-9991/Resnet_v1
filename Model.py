@@ -7,7 +7,7 @@ from tqdm import tqdm
 import torch.optim as optim
 from NetWork import ResNet
 from ImageUtils import parse_record
-
+import matplotlib.pyplot as plt
 """ This script defines the training, validation and testing process.
 """
 
@@ -33,6 +33,8 @@ class Cifar(nn.Module):
         num_samples = x_train.shape[0]
         num_batches = num_samples // self.config.batch_size
         learning_rate = self.config.learning_rate
+        avrg_losses = []
+        epoch_loss = []
         print('### Training... ###')
         for epoch in range(1, max_epoch+1):
             start_time = time.time()
@@ -68,11 +70,11 @@ class Cifar(nn.Module):
                 for j in range(x_train_new.shape[0]):
                     x_train_pre.append(parse_record(x_train_new[j],True)) 
                 x_train_pre = torch.tensor(x_train_pre, dtype=torch.float32)
-                #x_train_pre = x_train_pre.cuda()
+                x_train_pre = x_train_pre.cuda()
                 #print("Batch number:",i+1)
                 outputs = self.network(x_train_pre)
                 y_train_new = torch.tensor(y_train_new)
-                #y_train_new = y_train_new.cuda()
+                y_train_new = y_train_new.cuda()
                 loss = self.loss(outputs,y_train_new)             
                 ### YOUR CODE HERE
                 self.optimizer.zero_grad()
@@ -82,12 +84,28 @@ class Cifar(nn.Module):
                 print("Batch {:d}/{:d} Loss {:.6f}".format(i, num_batches, loss.item()),flush=True)
                 #print("Batch {:d}/{:d} Loss {:.6f}".format(i, num_batches, loss), end='\r', flush=True)
             avrg_loss = train_loss/num_samples
+            avrg_losses.append(avrg_loss)
+            epoch_loss.append(loss.item())
             print("Average training loss for the epoch",epoch,"is",avrg_loss)
             duration = time.time() - start_time
             print('Epoch {:d} Loss {:.6f} Duration {:.3f} seconds.'.format(epoch, loss, duration),flush=True)
 
             if epoch % self.config.save_interval == 0:
                 self.save(epoch)
+        plt.plot(epoch_loss)
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.title('Loss after every epoch')
+        plt.legend()
+        plt.savefig("epoch_loss_ver1.png")
+        plt.clf()
+ 
+        plt.plot(avrg_losses)
+        plt.xlabel('Epochs')
+        plt.ylabel('Avrg Loss')
+        plt.title('Average Loss after every epoch')
+        plt.legend()
+        plt.savefig("avrg_loss_ver1.png")
 
 
     def test_or_validate(self, x, y, checkpoint_num_list):
@@ -99,6 +117,7 @@ class Cifar(nn.Module):
         for i in x:
                 x_test_pre.append(parse_record(i,False))
         x_test_pre = torch.tensor(x_test_pre,dtype=torch.float32)
+        x_test_pre = x_test_pre.cuda()
         # Now you can pass x_tensor to the network
         print('### Test or Validation ###')
         for checkpoint_num in checkpoint_num_list:
@@ -118,9 +137,9 @@ class Cifar(nn.Module):
             ### END CODE HERE
 
             y = torch.tensor(y)
-            #y = y.cuda()
+            y = y.cuda()
             preds = torch.tensor(preds)
-            #preds = preds.cuda()
+            preds = preds.cuda()
             print('Test accuracy: {:.4f}'.format(torch.sum(preds==y)/y.shape[0]))
     
     def save(self, epoch):
