@@ -117,7 +117,7 @@ class Cifar(nn.Module):
         for i in x:
                 x_test_pre.append(parse_record(i,False))
         x_test_pre = torch.tensor(x_test_pre,dtype=torch.float32)
-        x_test_pre = x_test_pre.cuda()
+        #x_test_pre = x_test_pre.cuda()
         # Now you can pass x_tensor to the network
         print('### Test or Validation ###')
         for checkpoint_num in checkpoint_num_list:
@@ -137,9 +137,9 @@ class Cifar(nn.Module):
             ### END CODE HERE
 
             y = torch.tensor(y)
-            y = y.cuda()
+            #y = y.cuda()
             preds = torch.tensor(preds)
-            preds = preds.cuda()
+            #preds = preds.cuda()
             print('Test accuracy: {:.4f}'.format(torch.sum(preds==y)/y.shape[0]))
     
     def save(self, epoch):
