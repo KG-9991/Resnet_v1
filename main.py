@@ -38,9 +38,9 @@ def main(config):
     config.batch_size = 128
     config.weight_decay = 0.0002
     config.learning_rate = 0.1
-    model = Cifar(config).cuda()
-    """device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.to(device)"""
+    model = Cifar(config)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
     
     #summary(model, (3, 32, 32))
 
