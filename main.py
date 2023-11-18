@@ -19,7 +19,7 @@ def configure():
                         help='save the checkpoint when epoch MOD save_interval == 0')
     parser.add_argument("--first_num_filters", type=int, default=16, help='number of classes')
     parser.add_argument("--weight_decay", type=float, default=2e-4, help='weight decay rate')
-    parser.add_argument("--modeldir", type=str, default='model_final_#18_version1', help='model directory')
+    parser.add_argument("--modeldir", type=str, default='model_final_#3_version1', help='model directory')
     parser.add_argument("--learning_rate", type=float, default=0.1, help='model directory')
 
     ### YOUR CODE HERE
@@ -67,11 +67,11 @@ def main(config):
 
     # Second step: with hyperparameters determined in the first run, re-train
     # your model on the original train set.
-    model.train(x_train, y_train, 200)
+    #model.train(x_train, y_train, 200)
 
     # Third step: after re-training, test your model on the test set.
     # Report testing accuracy in your hard-copy report.
-    model.test_or_validate(x_test, y_test, [180,190,200])
+    model.test_or_validate(x_test, y_test, [190])
     ### END CODE HERE
 
 if __name__ == "__main__":
